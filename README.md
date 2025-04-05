@@ -1,4 +1,4 @@
-# Mini Project: Simulating Git Workflow with Tom and Jerry
+# Second Mini Project: Simulating Git Workflow with Tom and Jerry
 
 ## Prerequisites
 Ensure Git is installed on your system. If not, install it from [git-scm.com](https://git-scm.com/).
