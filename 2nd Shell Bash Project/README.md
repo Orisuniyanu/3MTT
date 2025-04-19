@@ -54,8 +54,44 @@ The above image show to use comment in a shell scripting.
 
 At this stage, you've established a solid foundation in Bash/shell scripting. *(It's worth noting that Bash and Shell are similar in functionality, which is why their names are often used interchangeably, despite being distinct interpreters.)*
 
-
 ---
+## TASK
+1. I create a file with vi in this directory `~/shell-scripting` which I name `commented_script.sh`
+```bash
+vi commented_script.sh
+```
+![5. Commented](./IMG/5.%20Commented%20File.png)
+
+2. Then I place the below content inside the file
+```bash
+
+# This is to display the purpose of using comment in a shell script
+# This will include single line comment, multiple line comment and in-line comment
+
+# Creating 3 Directories in my my directory
+mkdir ~/Folder1   # This will create a new directory called Folder1 in the home directory
+mkdir ~/Folder2   # This will create a new directory called Folder2 in the home directory
+mkdir ~/Folder3   # This will create a new directory called Folder3 in the home directory
+
+ls -l ~/Folder*   #This will display the content including files and directories in my home directory
+
+
+# Now this is to show how multiple comment also works in bash script
+# This is to print a goodbye message on the terminal
+echo "Goodbye for now I will see you in the next class, bye! cheers guys"
+
+```
+![6. VIM File](./IMG/6.%20VIM%20File.png)
+
+3. After that I change the permission for the owner using `chmod` to give me the permission to execute the `commented_script.sh`script, which changed the color to green after adding the executable permission.
+
+```bash
+chmod u+x commented_script.sh
+```
+![7. Change Permission](./IMG/7.%20Change%20Permission.png)
+4. Then I ran the script to see how the commented part will come and none was printed to the terminal except for those I don't add **#** in front, this make me understand how to use comment in bash script effectively.
+![8. Showing Result](./IMG/8.%20Showing%20Result.png)
+![9. Show Working](./IMG/9.%20Show%20Working.png)
 
 **End of Project**
 
