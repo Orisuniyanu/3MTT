@@ -100,7 +100,7 @@ fi
 - `fi`: ends the block
 
 ### Example:
-I create another file which I name `flow.sh`with this command `vim flow.sh`,then input the below word inside. I also change the permission with `chmod u+x flow.sh`, then run the script with `bash` 
+I create another file which I name `check_number.sh`with this command `vim check_number.sh`,then input the below word inside. I also change the permission with `chmod u+x check_number.sh`, then run the script with `bash` 
 ```bash
 #!/bin/bash
 read -p "Enter a number: " num
@@ -110,7 +110,7 @@ if [ $num -gt 0 ]; then
   echo "The number is positive."
 fi
 ```
-![6. Flow File](./IMG/6.%20FLow%20File.png)
+![6. Check Number File](./IMG/6.%20FLow%20File.png)
 
 - `-gt` means "greater than" These are called operators that are used within the condition block to perform numeric comparisons between values.
 
@@ -134,7 +134,7 @@ fi
 - then: If the elif condition is true, execute the commands that follow this keyword.
 
 ### Updated Script:
-I update the previous script name `flow.sh` and I include the below word.
+I update the previous script name `check_number.sh` and I include the below word.
 ```bash
 #!/bin/bash
 read -p "Enter a number: " num
@@ -201,7 +201,7 @@ output of a command. The loop executes once for each item in this list.
 - done: This keyword marks the end of the loop. It signifies that all commands in the loop have been executed for each item in the list, and the loop is complete.
 
 ### Example:
-I create another file with which I name `loop.sh`, then include the below words, change the permission and run the script.
+I create another file with which I name `loop_list.sh`, then include the below words, change the permission and run the script.
 ```bash
 #!/bin/bash
 for i in 1 2 3 4 5; do
@@ -215,19 +215,19 @@ In this example:
 - For each value of i, the loop executes the commands between do and done.
 - The command echo "Hello, World! This is message $i" prints a greeting along with the current value of i. Once i has taken each value in the list, the loop ends.
 
-![11. Run Loop](./IMG/11.%20Run%20Loop.png)
+![11. Run Loop List](./IMG/11.%20Run%20Loop%20List.png)
 ---
 
 ## 🔢 `for` Loop (Range Syntax)
-In this example, I create another file which I name `range.sh` then insert the below words to the file, giving the owne which is me executable permission, then I run the script to see it behaviour.
+In this example, I create another file which I name `loop_range.sh` then insert the below words to the file, giving the owne which is me executable permission, then I run the script to see it behaviour.
 ```bash
 #!/bin/bash
 for i in {1..5}; do
   echo "Counting... $i"
 done
 ```
-![12. VIM Range](./IMG/12.%20VIM%20Range.png)
-![13. Run Range](./IMG/13.%20Run%20Range.png)
+![12. VIM Loop Range](./IMG/12.%20VIM%20Range.png)
+![13. Run Loop Range](./IMG/13.%20Run%20Range.png)
 ---
 
 ## 2. 👨‍💻 C-style `for` Loop
@@ -246,22 +246,22 @@ done
 
 ## ✅ Task
 
-1. Create another shell scripts for `for` C-style Form which I name `style.sh`
+1. Create another shell scripts for `for` C-style Form which I name `loop_cstyle.sh`
 ```bash
-vim style.sh
+vim loop_cstyle.sh
 ```
 2. Insert the example code above.
 ![14. C-Style](./IMG/14.%20C-Style.png)
 3. Set executable permission using:
 
 ```bash
-chmod +x style.sh
+chmod +x loop_cstyle.sh
 ```
 
 4. Run the script with `bash` and observe how each loop works:
 
 ```bash
-bash style.sh
+bash loop_cstyle.sh
 ```
-![15. Run Style](./IMG/15.%20Run%20Style.png)
+![15. Run C-Style](./IMG/15.%20Run%20Style.png)
 ---
