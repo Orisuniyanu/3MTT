@@ -216,8 +216,7 @@ Admin Group Permission
 ![9. Admin Permission](./IMG/9.%20Admin%20Permission.png)
 
 
-[Link to my Bash script for IAM management](https://github.com/Orisuniyanu/3MTT/blob/main/Capstone%20Project%Shell%20Script%20for%20AWS/aws-iam-manager.sh)
-
+[Link to my Bash script for IAM management](https://github.com/Orisuniyanu/3MTT/blob/main/Capstone%20Project%20Shell%20Scirpt%20for%20AWS/aws-iam-manager.sh)
 
 
 
