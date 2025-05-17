@@ -27,6 +27,46 @@ In this guide, I’ll cover how to:
 
 6. **Create Programmatic Access Credentials:** Generate programmatic access credentials-specifically, an **access key ID** and a **secret access key** for **automation_user**. These credentails are indispensable for authenticating our script with the AWS API through the Linux terminal, allowing it to create and manage cloud resources programmatically.
 
+## Create an IAM Policy
+1. I begin with logging in to my AWS Management console with a user that has administrative privilege which is **Orisun**.
+![6. Log in](./IMG/6.%20Log%20in.png)
+2. After I successful log in, I search for **IAM** then click on **Policy**, then click on **Create policy**
+![10. Create Policy](./IMG/10.%20Create%20Policy.png)
+3. Then under **Specify permissions** I select both `EC2 and S3`, then click on **Next**.
+![11. Specify permissions](./IMG/11.%20Specify%20permissions.png)
+4. Then I give my policy **name** as `development-team-policy` and **description** as `This policy is for Development to allow to perform differedifferent activities on both EC2 and S3 Resources` then click on **Create policy** below the page.
+5. After that my policy was successfully created, on the policy page under **filter by type** I select **Customer managed** then I was able to my the policy I create.
+![13. Policy Created](./IMG/13.%20Policy%20Created.png)
+
+## Create an IAM Role
+2. Still on **IAM dashboard** then click on `Roles` at the left side, then click on `Create role`.
+![7. Create Role](./IMG/7.%20Create%20Role.png)
+3. Then on the next page I select **AWS Service**
+![8. AWS Service](./IMG/8.%20AWS%20Service.png)
+4. And I also **EC2** under `Use case` then click on **Next**
+![9. EC2](./IMG/9.%20EC2.png)
+4. Then the next page I select the policy I create in the previous section.
+![14. Add Policy](./IMG/14.%20Add%20Policy.png)
+5. Then I give it a name which is **IAM_Service**, then click on **Create role**
+![15. Role Name](./IMG/15.%20Role%20Name.png)
+6. And it was a success.
+![16. Successful](./IMG/16.%20Successful.png)
+
+## Create an IAM User
+
+1. Still on **IAM dashboard** then click on `Users` at the left side, then click on `Create user`.
+![17. Create User](./IMG/17.%20Create%20User.png)
+2. Then name the user **automation_user** and also I uncheck the box to **Provide user access to the AWS Management Console**, because this user will only access the AWS Management console through the AWS CLI, then click on **Next**.
+![18. Automatic User](./IMG/18.%20Automation_user.png)
+3. The step 2, I select **Attach policies directly** then select the policy I create in the last section.
+![19. Add Policy](./IMG/19.%20Add%20Policy.png)
+4. Then I click on **Create user** Here's the result.
+![20. User Created](./IMG/20.%20User%20Created.png)
+5. After I create a access key for the user which is **automaic_user**
+![21. Create Permission](./IMG/21.%20Create%20Permission.png)
+6. After that my Access key and Secret access was created which I copied for the configuration of AWS CLI.
+![22. Access Key](./IMG/22.%20Access%20Key.png)
+
 ## Installing and Configuring the AWS CLI
 
 After setting up AWS account and creating the necessary IAM user and permissions, the next step involves installing the AWS Command Line Interface (CLI). The AWS CLI is a powerful tool that allows you to interact with AWS services directly from your terminal, enabling autimation and simplification of AWS resource management.
