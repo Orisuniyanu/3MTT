@@ -111,4 +111,4 @@ docker run -d -p 8080:80 dockerfile:latest
 ![11. Docker Remove](./IMG/11.%20Docker%20Remove.png)
 - **docker ps** -- To see the container running presently
 - **docker rm** -- To remove delete container from the docker environment, but I run it to prove that a container must be stopped before it can be remove or delete.
--- **docker ps -a** -- To see all the conatiner including the running container and those that are not running.
+- **docker ps -a** -- To see all the conatiner including the running container and those that are not running.
