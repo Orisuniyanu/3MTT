@@ -70,7 +70,11 @@ docker rm ubuntu
 ```
 This deletes the container, but keep the associated images remains on the system.
 
-1. To check Information about the docker engine and the machine hosting the docker.
+1. To check Information about the hosting machine and the docker engine and the machine hosting the docker.
+```bash
+uname -a
+```
+![12. Uname](./IMG/12.%20Uname.png)
 ```bash
 docker info
 ```
@@ -85,9 +89,26 @@ docker inspect <image_name or id>
 
 3. To start my container that is not running.
 ![9. Docker Containers](./IMG/9.%20Docker%20Containers.png)
+Or to start a new container from a static image
+```bash
+docker run -d -p 8080:80 dockerfile:latest
+```
+**Command Breakdown:**
+- **docker run** -- Starts a new container.
+- **-d** -- Runs the container in detached mode (background process).
+- **-p 8080:80** --  Maps port 80 inside the container to port 8080 on the host machine.
+- **dockerfile:latest** -- Specifies the image to use ( dockerfile with the latest tag).
+
+![13. Docker Run](./IMG/13.%20Docker%20Run.png)
 
 4. To stop a running container.
 ![10. Docker Stop](./IMG/10.%20Docker%20Stop.png)
 
-5. To remove the container.
+5. To restart the stopped container
+![14. Docker Restart](./IMG/14.%20Docker%20Restart.png)
+
+6. To remove the container.
 ![11. Docker Remove](./IMG/11.%20Docker%20Remove.png)
+- **docker ps** -- To see the container running presently
+- **docker rm** -- To remove delete container from the docker environment, but I run it to prove that a container must be stopped before it can be remove or delete.
+-- **docker ps -a** -- To see all the conatiner including the running container and those that are not running.
