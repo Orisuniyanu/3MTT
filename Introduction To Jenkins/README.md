@@ -37,6 +37,14 @@ sudo apt install default-jdk-headless
     sudo apt-get install jenkins
 ```
 ![4. Install Jenkins](./IMG/4.%20Install%20Jenkins.png)
+- **wget** -- Downloads files from the internet
+- **-q** -- Runs quietly (no output).
+- **-0** -- Sends the downloaded file to standard output instead of saving it
+- **https://pkg.jenkins.io/debian-stable/jenkins.io.key** -- The URL of the Jenkins GPG key.
+- **|** -- Pipes the downloaded key into the next command.
+- **sudo** -- Runs the command with administrator privileges.
+- **apt-key add -** -- Adds the key to the system's trusted keys (the - tells apt-key to read from standard input).
+- **sudo sh -c 'echo deb https://pkg.jenkins.io/debian-stable binary/ > \/etc/apt/sources.list.d/jenkins.list'** -- This command adds the Jenkins repository to your system's package sources, allowing you to install Jenkins via apt
 This command install Jenkins. It involves importing the Jenkins GPG key for package verification, adding the Jenkins repository to the system's sources, updating package lists, and finally, installing Jenkins through the package manager (apt-get).
 
 5. Then I check if Jenkins has been installed, and it is up and running
@@ -69,4 +77,71 @@ cat /var/lib/jenkins/secrets/initialAdminPassword
 12. After that I was able to log in to the Jenkins interface homepage.
 ![13. Jenkins](./IMG/13.%20Jenkins.png)
 
+## Jenkins Jobs (Freestyle)
+1. Then I started by creating my first job, where I click on **New Item**.
+![14. New Item](./IMG/14.%20New%20Item.png)
+2. Then give it a name which I name **FreeStyle**, then click on Freestyle project, then click on **OK**.
+![15. Freesytle Job](./IMG/15.%20Freesytle%20Job.png)
+3. Under build steps, I click on **Execute shell**
+4. Then I type the followinf command
+```bash
+echo "Hello Jenkins Famliy, I am learning Jenkins finally!"
+```
+![16. Save](./IMG/16.%20Save.png)
+Then save the configuration and ran it to see how it works.
+5. After that I click on build now to run the Jenkins pipeline which is successful.
+![17. Freesyle Good](./IMG/17.%20Freesyle%20Good.png)
+
+## Integrate GitHub to Jenkins
+
+1. I click on **Manage Jenkins** on the dashboard 
+![18. Manage Jenkins](./IMG/18.%20Manage%20Jenkins.png)
+2. Then click on **Plugins**, then click on **Installed Plugins** this is to see if I have git plugins installed on my Jenkins which is present already.
+![19. GitHub Plugins](./IMG/19.%20GitHub%20Plugins.png)
+3. Still in the Manage Jenkins, I click on **Credentials** 
+![20. Credentials](./IMG/20.%20Credentials.png)
+4. Then click on **global**
+![21. Global](./IMG/21.%20Global.png)
+5. Then under Kind I leave to username and password and type in my GitHub username and password with ID for easily identification.
+![22. GitHub Integration](./IMG/22.%20GitHub%20Integration.png)
+
+## Pipeline 
+1. I click on **New Item**, name it **Challenge 2** and select Pipeline as the item type.
+![23. Pipeline Job](./IMG/23.%20Pipeline%20Job.png)
+2. On the configuration page, under pipeline I select **Pipeline script** and type in the following script
+```bash
+pipeline {
+    agent any
+    stages {
+        stage ("Stage 1") {
+            steps {
+                echo "This is stage 1"
+            }
+        }
+        stage ("Stage 2") {
+            steps {
+                echo "This is stage 2"
+            }
+        }
+        stage ("Stage 3") {
+            steps {
+                echo "This is stage 3"
+            }
+        }
+        stage ("Stage 4") {
+            steps {
+                echo "This is stage 4"
+            }
+        }
+        stage ("Stage 5") {
+            steps {
+                echo "This is stage 5"
+            }
+        }
+    }
+}
+```
+Then save it and click on Build now 
+3. Then this is the result
+![24. Challenge 2](./IMG/24.%20Challenge%202.png)
 
