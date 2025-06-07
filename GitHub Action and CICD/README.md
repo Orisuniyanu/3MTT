@@ -78,6 +78,14 @@ jobs:
     steps:
     # Steps will be defined next
 ```
+I create a new directory and a new file for gitaction workflow
+```bash
+mkdir .github && cd .github
+vi main.yml
+```
+Then push to GitHub.
+![6. GItAction](./IMG/6.%20GItAction.png)
+
 
 2. **Adding Build Steps:**
 - Each steps in the job performs a specific task.
@@ -186,3 +194,6 @@ jobs:
 **Objectives:**
 - Implement parallel and matrix builds.
 - Manage dependencies across different environments.
+
+Then I click on **Actions**
+![7. GitAction Run](./IMG/7.%20GitAction%20Run.png)
