@@ -237,5 +237,265 @@ jobs:
 - Ensure that your cloud platform credentials are correctly set up in GitHub Secrets.
 - validate your YAML synatx errors using online validators like [YAML Lint.](https://www.yamllint.com/)
 
+## Practical
 
+## Step 1: GitHub Setup
 
+1. I login to my GitHub account and create a new repository which I name **GitCloud**.
+![6. GitHub Repo](./IMG/6.%20GitHub%20Repo.png)
+2. Then move to my Local Environment and also open an new directory for this project which I named **cloud**
+![7. Local Environment](./IMG/7.%20Git%20Bash.png)
+3. Then I Create a simple test in **tests/app.test.js**
+```bash 
+mkdir tests && cd tests
+
+vi app.test.js
+
+# Then add the follwoing script
+const request = require('supertest');
+const express = require('express');
+
+const app = express();
+app.get('/', (req, res) => res.send('Hello from Node.js!'));
+
+test('GET / returns greeting', async () => {
+  const res = await request(app).get('/');
+  expect(res.statusCode).toBe(200);
+  expect(res.text).toBe('Hello from Node.js!');
+});
+```
+![8. Tests](./IMG/8.%20Tests.png)
+
+4. Then I create CI workflow pipeline directory
+```bash
+mkdir -p .github/workflows && cd .github/workflows
+```
+5. After that I create a new file for Workflow With Tests + Versioning (Bump).
+```bash
+vi ci.yml
+# Then I add the following script to the file
+name: CI & Bump Version
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with: { node-version: '18' }
+      - run: npm ci
+      - run: npm test
+      - name: Bump version & tag
+        uses: anothrNick/github-tag-action@1.67.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BUMP: patch
+          WITH_V: true
+```
+![9. CI.YAML](./IMG/9.%20CIYAML.png)
+
+6. Still inside the .github/workflows I create another file name **release.yml**
+```bash
+vi release.yml
+# Then I add the following script to the file
+name: Create Release
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          name: Release ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+![10. Release](./IMG/10.%20Release.png)
+7. Then I create another 2 file that deploy staging to EC2 instance and main branch to Elastic Beanstalk (EB).
+```bash
+vi deploy-staging.yml
+
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm ci
+      - name: Deploy to EC2 (Staging)
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.STAGING_AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          source: "."
+          target: "/home/ec2-user/my-node-app-staging"
+      - name: Restart on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.STAGING_AWS_HOST }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          script: |
+            cd /home/ec2-user/my-node-app-staging
+            npm install
+            pm2 stop my-node-app || true
+            pm2 start ecosystem.config.js
+            pm2 save
+```
+```bash
+vi deploy-prod.yml
+
+name: Deploy to Production (EB)
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with: { node-version: '18' }
+      - run: npm ci
+      - name: Zip for EB
+        run: zip -r my-node-app.zip .
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name my-node-app \
+            --version-label ${{ github.ref_name }} \
+            --source-bundle S3Bucket=${{ secrets.EB_S3_BUCKET }},S3Key=my-node-app-${{ github.ref_name }}.zip
+          aws elasticbeanstalk update-environment \
+            --environment-name my-node-app-prod \
+            --version-label ${{ github.ref_name }}
+```
+8. Then I went back to the root directory of this directory and create package.json file
+```bash
+vi package.json
+
+{
+  "name": "my-node-app",
+  "version": "1.0.0",
+  "description": "A simple Node.js app with CI/CD and AWS deployment",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "Iyanu",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "nodemon": "^3.1.0"
+  }
+}
+```
+9. After that I push the local repository to my remote repository using GitHub.
+```bash
+git init
+git add .
+git commit -m "First commit"
+git remote add origin git@github.com:Orisuniyanu/GitCloud.git
+git push -u origin main
+```
+## Step 2: GitHub Secrets
+1. Then on the repository I created for this project I click on **Secrets and variables** then click on **Actions**.
+2. Then I click on **New repository secret** under **Repository secret**.
+3. Then I paste my ssh key to the provided area which I also give it a name.
+![12. Add Secret](./IMG/12.%20Add%20Secret.png)
+4. I also add another secret this time is my public IP Address to my EC2 instance. Also same thing for username.
+![13. IP.Secret](./IMG/13.%20IP.Secret.png)
+
+## Step 3: EC2 Instance
+1. Then I log in to my EC2 instance and instance node, npm and pm2 on it.
+```bash
+sudo apt update && sudo apt upgrade -y
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo bash -
+sudo apt install -y nodejs
+sudo npm install -g pm2
+```
+2. After installing all the package needed I check if they are all installed properly by checking their version.
+```bash
+node -v
+npm -v
+pm2 -v
+```
+![14. Versions](./IMG/14.%20Versions.png)
+3. Then I went back to my GitHub and the pipeline is already running and it is successful.
+![15. GitHub Action Successfully](./IMG/15.%20GitHub%20Action%20Successfully.png)
+![16. GitHub Action Successfully1](./IMG/16.%20GitHub%20Action%20Successfully1.png)
+4. This the deploy-staging.yml is successful.
+
+## Step4: Creating Elastic Beanstalk (EB)
+1. Now to make this easily for me I provision EB and S3 Bucket using Terraform.
+2. I create a new directory for this which I name **EBANDS3**
+3. Then I create a new file which is **main.tf**
+```bash
+provider "aws" {
+  region = "us-west-2"
+}
+
+resource "aws_s3_bucket" "eb_bucket" {
+  bucket = "my-node-app-deployments"
+}
+
+resource "aws_elastic_beanstalk_application" "app" {
+  name        = "my-node-app"
+  description = "My Node.js App managed by Terraform"
+}
+
+resource "aws_elastic_beanstalk_environment" "env" {
+  name                = "my-node-app-env"
+  application         = aws_elastic_beanstalk_application.app.name
+  solution_stack_name = "64bit Amazon Linux 2023 v4.2.1 running Node.js 18"
+
+  setting {
+    namespace = "aws:autoscaling:launchconfiguration"
+    name      = "InstanceType"
+    value     = "t2.micro"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:environment"
+    name      = "EnvironmentType"
+    value     = "SingleInstance"
+  }
+
+  setting {
+    namespace = "aws:elasticbeanstalk:application:environment"
+    name      = "NODE_ENV"
+    value     = "production"
+  }
+}
+```
