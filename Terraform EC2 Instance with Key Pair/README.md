@@ -1,0 +1,184 @@
+# Terraform EC2 Instance with Key Pair and User Data
+
+## Purpose
+
+In this mini project, you will use Terrafrom to automate the launch of an EC2 instance on AWS. The project includes the generation of a downloadable key pairs for the instance and execution of a user script to install and configure Apache HTTP server.
+
+## Objectives
+
+1. **Terraform Comfiguration:**
+
+- Learn how to write Terraform code to launch an EC2 instance with specified configurations.
+
+2. **Key Pair Generation:**
+
+- Generate a key pair and make it downloadable after EC2 instance creation.
+
+3. **User Data Execution:**
+
+- User Terraform to execute a user data on the EC2 instance during launch.
+
+## Prerequisite
+
+Ensure to have the AWS CLI installed and configured with appropraiate credentials. Then I run the following to confirm if AWS CLI is installed and configgured with the neccessary credentails.
+
+```bash
+aws version
+
+aws configure list
+
+aws sts get-caller-identity
+```
+
+![1. AWS Credentials](./IMG/1.%20AWS%20Credentials.png)
+
+## Project Tasks
+
+### Task 1: Terraform Configuration for EC2 Instance
+
+1. Create a new directory for this project which I name `terraform-ec2-keypair`.
+
+```bash
+mkdir terraform-ec2-keypair
+
+cd terraform-ec2-keypair
+```
+
+2. Inside the directory I also create a new file which is `main.tf`.
+
+```bash
+vi main.tf
+```
+
+![2. Make a new Directory](./IMG/2.%20Make%20a%20new%20Directory.png)
+
+3. Then I write Terraform code that create an EC2 instance with the following specification:
+
+- Instance type: `t2.micro`
+- Key pair: Generate a new key pair and make it downloadable.
+- Security group: Allow incoming traffic on port 80.
+
+I create a two file `main.tf` and `security-group.tf`
+
+1. main.tf file content
+
+```hcl
+provider "aws" {
+  region = "us-east-1"
+}
+
+# Generate a new private/public key pair using Terraform
+resource "tls_private_key" "server_keypair" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+# Create a Key Pair in AWS using the generated public key
+resource "aws_key_pair" "server_keypair" {
+  key_name   = "terraform-keypair"
+  public_key = tls_private_key.server_keypair.public_key_openssh
+}
+
+# Save the private key locally
+resource "local_file" "private_key" {
+  content         = tls_private_key.server_keypair.private_key_pem
+  filename        = "${path.module}/terraform-keypair.pem"
+  file_permission = "0600"
+}
+
+# Launch EC2 instance using the key pair
+resource "aws_instance" "terraform_instance" {
+  ami                    = "ami-02b3c03c6fadb6e2c"  # Replace with a valid AMI
+  instance_type          = "t2.micro"
+  key_name               = aws_key_pair.server_keypair.key_name
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              yum update -y
+              yum install -y httpd
+              systemctl start httpd
+              systemctl enable httpd
+              echo "<h1>Hello World from $(hostname -f)</h1>" > /var/www/html/index.html
+              EOF
+
+  tags = {
+    Name = "example-instance"
+  }
+}
+
+output "public_ip" {
+  value = aws_instance.terraform_instance.public_ip
+}
+```
+
+2. security-group.tf
+
+```hcl
+resource "aws_security_group" "web_sg" {
+  name        = "terraform-web-sg"
+  description = "Allow HTTP inbound traffic"
+  vpc_id      = "vpc-0d30feeb79e8a2c12"
+
+  ingress {
+    description      = "Allow HTTP"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-sg"
+  }
+}
+```
+
+4. Initialize the Terraform project using.
+
+```bash
+terraform init
+```
+
+![3. Terraform Validate](./IMG/3.%20Terraform%20Validate.png)
+5. Apply the Terraform configuration to create the EC2 instance using the command
+
+```bash
+terraform validate
+terraform plan
+terraform apply
+```
+
+![4. Terraform Apply](./IMG/4.%20Terraform%20Apply.png)
+
+6. Then I access the website appache on the termial
+
+```bash
+curl http://44.223.60.236
+```
+
+![5. Curl Terraform](./IMG/5.%20Curl%20Terraform.png)
+
+7. I also check the website on my browser also, `http://http://44.223.60.236:80`
+
+![6. Terraform Browser](./IMG/6.%20Terraform%20Browser.png)
+
+## Task 2: User Data Script Execution
+
+1. Then I extent my Terraform configuration to include the execution of the provided user data script.
+2. Modify the user data script to install and configure Apache HTTP server.
+3. Apply the user updated Terraform configuration to launch the EC2 instance with the user data script using the command `terraform apply`.
+
+## Task 3: Accessing the Web Server
+
+1. After the EC2 instance is created and running, access the Apache web server by using its public address.
+2. Verify that the web server display the `Hello World` message generated by the user data script.
+
+![6. Terraform Browser](./IMG/6.%20Terraform%20Browser.png)
